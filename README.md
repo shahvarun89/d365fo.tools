@@ -1,218 +1,75 @@
-# d365fo.tools
+﻿# **d365fo.tools**
 Powershell module to handle the different management tasks during a Dynamics 365 Finace & Operations (D365FO)
 Read more about D365FO on [docs.microsoft.com](https://docs.microsoft.com/en-us/dynamics365/unified-operations/fin-and-ops/index)
 
 Available on Powershellgallery
 [d365fo.tools](https://www.powershellgallery.com/packages/d365fo.tools)
 
+## **Getting started**
+### **Install the latest module**
 ```
 Install-Module -Name d365fo.tools
 ```
 
-**List all available commands / functions**
+### **Install without administrator privileges**
+```
+Install-Module -Name d365fo.tools -Scope CurrentUser
+```
+### **List all available commands / functions**
 
 ```
 Get-Command -Module d365fo.tools
 ```
 
-**Update the module**
+### **Update the module**
 
 ```
 Update-Module -name d365fo.tools
 ```
 
-The tool tries to assist you with a lot of the time consuming and/or cumbersome tasks during a project. E.g.
-
-**Get product build numbers**
+### **Update the module - force**
 
 ```
-Get-D365ProductInformation
+Update-Module -name d365fo.tools -Force
 ```
+## **Getting help**
 
-*Will list all build numbers available, application and platform*
+Since the project started we have adopted and extended the comment based help inside each cmdlet / function. 
 
-**Rename a local VM (onebox) to be accessible on a custom URL / URI.**
+**Getting help starts inside the PowerShell console**
 
-```
-Get-D365InstanceName
-```
-*Displays the current instance registered on the machine. Run on a machine with the D365 AOS installed on to get an result*
+Getting help is as easy as writing **Get-Help CommandName**
 
 ```
-Rename-D365Instance -NewName 'Demo1'
+Get-Help New-D365Bacpac
 ```
 
-*Now the machine (iis) will only respond to request for https://demo1.cloud.onebox.dynamics.com*
+*This will display the available default help*
 
-**Change the start page of the browser to another URL / URI**
-
-```
-Set-D365StartPage -Name 'Demo1'
-```
-
-*Now when starting the browser you will start visit https://demo1.cloud.onebox.dynamics.com*
-
-**Provision a new admin for a given instance**
+Getting the entire help is as easy as writing **Get-Help CommandName -Full**
 
 ```
-Set-D365Admin "admin@contoso.com"
+Get-Help New-D365Bacpac -Full
 ```
 
-*Please remember that the username / e-mail has to be a valid Azure Active Directory*
+*This will display all available help content there is for the cmdlet / function*
 
-**Import a list of users into the environment**
-
-```
-Import-D365AadUser -Userlist "Claire@contoso.com;Allen@contoso.com"
-```
-
-*Imports Claire and Allen into the environment*
-
-*Remeber that the list has to be semicolon (';') separated*
-
-
-**Generate a bacpac file from a Tier1 environment to be ready for a Tier2 environment**
+Getting all the available examples for a given command is as easy as writing **Get-Help CommandName -Examples**
 
 ```
-New-D365BacPac -ExecutionMode FromSql -DatabaseServer localhost -DatabaseName db -SqlUser User123 -SqlPwd "Password123" -BackupDirectory c:\Temp\backup\ -NewDatabaseName Testing1 -BacpacDirectory C:\Temp\Bacpac\ -BacpacName Testing1
+Get-Help New-D365Bacpac -Examples
 ```
 
-*This will backup the db database from the localhost server.*
+*This will display all the available **examples** for the cmdlet / function* 
 
-*It will restore the backup back into the localhost server with a new name "Testing1".*
+We know that when you are learning about new stuff and just want to share your findings with your peers, working with help inside a PowerShell session isn't that great.
 
-*It will clean up the Testing1 database for objects that cannot exist in Azure DB.*
+We have implemented **platyPS** (https://github.com/PowerShell/platyPS) to generate markdown files for each cmdlet / function available in the module. These files are hosted here on github for you to consume in your web browser and the give you the look and feel of other documentation sites.
 
-*It will start the sqlpackage.exe file and export a valid bacpac file.*
+The generated help markdown files are located inside the **'docs'** folder in this repository. Click this [link](https://github.com/d365collaborative/d365fo.tools/tree/master/docs) to jump straight inside.
 
-*It will delete the Testing1 database on the localhost server.*
+For sake of the sanity and just trying to help people out, we copy & pasted **all** the old examples previously available in the readme into the wiki. The page is located [here](https://github.com/d365collaborative/d365fo.tools/wiki/Old-readme-examples). We **don't** plan on keep the **"Old readme examples"** wiki up-to-date going forward. If you believe we are missing some examples that should be part of the comment based help, please create an issue.
 
-**Generate a bacpac file from a Tier2 environment. As an export / backup file only**
+## Contributing
 
-```
-New-D365BacPac -ExecutionMode FromAzure -DatabaseServer dbserver1.database.windows.net -DatabaseName db -SqlUser User123 -SqlPwd "Password123" -BacpacDirectory C:\Temp\Bacpac\ -BacpacName Testing1 -RawBacpacOnly
-```
-
-*This will export an bacpac file directly from the db database from the Azure db instance at dbserver1.database.windows.net.*
-
-**Generate a bacpac file from a Tier2 environment to be ready for a Tier1 environment**
-
-```
-New-D365BacPac -ExecutionMode FromAzure -DatabaseServer dbserver1.database.windows.net -DatabaseName db -SqlUser User123 -SqlPwd "Password123" -NewDatabaseName Testing1 -BacpacDirectory C:\Temp\Bacpac\ -BacpacName Testing1
-```
-
-*This will create a copy of the db database in the Azure db instance at dbserver1.database.windows.net.*
-
-*It will clean up the Testing1 database for objects that cannot exist in SQL Server.*
-
-*It will start the sqlpackage.exe file and export a valid bacpac file.*
-
-*It will delete the Testing1 database in the Azure db instance at dbserver1.database.windows.net.*
-
-**Upload a file to Azure Storage account**
-
-```
-Invoke-D365AzureStorageUpload -AccountId "miscfiles" -AccessToken "xx508xx63817x752xx74004x30705xx92x58349x5x78f5xx34xxxxx51" -Blobname "backupfiles" -Filepath C:\temp\bacpac\UAT_20180701.bacpac -DeleteOnUpload
-```
-
-*This will upload the UAT_20180701.bacpac to the specified Azure Storage account and delete it when completed*
-
-**List all the database connection details for an environment**
-
-```
-Get-D365DatabaseAccess
-```
-
-*This will show database connection details that D365FO is configured with*
-
-**Decrypt and store a copy of the web.config file from the AOS**
-
-```
-Get-D365DecryptedConfigFile -DropPath 'C:\Temp'
-```
-
-*This will store a decrypted web.config file at c:\temp*
-
-**Rearm the Windows license / activation counter**
-
-```
-Invoke-D365ReArmWindows -Restart
-```
-
-*This will try to rearm the Windows license and will only work if you have retries left. Will restart afterwards.*
-
-**Sync the database like Visual Studio**
-
-```
-Invoke-D365DBSync
-```
-
-*This utilizes the same mechanism as Visual Studio just in PowerShell and runs the entire synchronization process.* 
-
-**Update users in an environment after database migration / restore or re-provisioning**
-
-```
-Update-D365User -Email "claire@contoso.com"
-```
-*This will search for the user in the UserInfo table with "claire@contoso.com" e-mail address and update it with the needed details to get access to the environment*
-
-**Update users in an environment after database migration / restore or re-provisioning - advanced**
-
-```
-Update-D365User -Email "%contoso.com%"
-```
-
-*This will search for all users in the UserInfo table with the "contoso.com" text in their e-mail address and update them with the needed details to get access to the environment*
-
-**Handling D365 environment**
-
-```
-Get-D365Environment
-```
-
-*Will list the status of all D365 services on the local machine*
-
-```
-Get-D365Environment -ComputerName "TEST-SB-AOS1","TEST-SB-AOS2","TEST-SB-BI1" -All
-```
-
-*Will list the status of all D365 services on the specified machines*
-
-```
-Stop-D365Environment
-```
-
-*Will stop all D365 services on the local machine. Will report current status for all services*
-
-```
-Stop-D365Environment -ComputerName "TEST-SB-AOS1","TEST-SB-AOS2","TEST-SB-BI1" -All
-```
-
-*Will stop all D365 services on the the specified machines. Will report current status for all services*
-
-```
-Start-D365Environment
-```
-
-*Will start all D365 services on the local machine. Will report current status for all services*
-
-```
-Start-D365Environment -ComputerName "TEST-SB-AOS1","TEST-SB-AOS2","TEST-SB-BI1" -All
-```
-
-*Will start all D365 services on the the specified machines. Will report current status for all services*
-
-**Offline Authentication Administrator Email**
-
-```
-Get-D365OfflineAuthenticationAdminEmail
-```
-
-*Will display the current registered account as Offline Authentication Administrator*
-
-```
-Set-D365OfflineAuthenticationAdminEmail -Email "admin@contoso.com"
-
-```
-
-*Will update the Offline Authentication Administrator registration to "admin@contoso.com"*
+Want to contribute to the project? We'd love to have you! Visit our [contributing.md](https://github.com/d365collaborative/d365fo.tools/blob/master/contributing.md) for a jump start.
